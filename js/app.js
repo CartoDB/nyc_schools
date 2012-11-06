@@ -61,9 +61,46 @@ function getHostingSchools() {
 
 }
 
+function getLines() {
+
+}
+
+
+function draw() {
+
+var geo = {
+  "type": "FeatureCollection",
+  "features": [{
+    "type": "Feature",
+    "properties": {
+      "st_astext": "MULTILINESTRING((-71.160281 42.258729,-71.160837 42.259113,-71.161144 42.25932))"
+    },
+    "geometry": {
+      "type": "MultiLineString",
+      "coordinates": [
+        [
+          [-71.160281, 42.258729],
+          [-71.160837, 42.259113],
+          [-71.161144, 42.25932]
+        ]
+      ]
+    }
+  }]
+}
+
+var path = new GeoJSON(geo, {
+  "strokeColor": "#FFFF00",
+  "strokeWeight": 7,
+  "strokeOpacity": 0.75
+
+});
+
+ path[0][0].setMap(map);
+
+}
+
+
 function init() {
-
-
 
   map = new google.maps.Map(document.getElementById('map'), {
     center: new google.maps.LatLng(40.7143528, -74.0059731),
@@ -76,6 +113,7 @@ function init() {
   getRelocatingSchools();
   getHostingSchools();
 
+  draw();
   infowindow = new CartoDBInfowindow(map);
 
   /*cartodb_gmaps2 = new CartoDBLayer({
