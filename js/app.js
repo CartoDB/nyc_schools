@@ -27,7 +27,7 @@ function onMarkerClick(event) {
   console.log(this, event);
 
   // Set infowindow content
-  infowindow.setContent(this.type);
+  infowindow.setContent("<p>"+this.type+"</p>");
 
   // Set infowindow latlng
   infowindow.setPosition(event.latLng);
