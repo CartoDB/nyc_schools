@@ -25,9 +25,9 @@ function init() {
 
 
   map = new google.maps.Map(document.getElementById('map'), {
-    center: new google.maps.LatLng(7.369722, 12.354722),
+    center: new google.maps.LatLng(40.7143528, -74.0059731),
     disableDefaultUI: false,
-    zoom: 3,
+    zoom: 11,
     mapTypeId: google.maps.MapTypeId.ROADMAP,
     mapTypeControl: false
   });
