@@ -1,7 +1,14 @@
 var map, infowindow;
-var pathStyle = {"strokeColor": "#FFFF00", "strokeWeight": 7, "strokeOpacity": 0.75 }
 
-function addMarker(map, type, lat, lng) {
+
+CONFIG = {
+  relocatingURL: "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT%20ST_X(the_geom)%20as%20longitude,%20ST_Y(the_geom)%20as%20latitude,%20address_of_relocating_school,borough,grade_levels_that_are_relocating,host_bldg_id%20FROM%20relocating_schools",
+  hostingURL:    "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT%20ST_X(the_geom)%20as%20longitude,ST_Y(the_geom)%20as%20latitude,host_bldg_address,host_bldg_id,host_bldg_name,host_boro%20FROM%20host_schools",
+  pathURL:       "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT%20ST_AsGeoJSON(the_geom),relocating_school_bn,host_bldg_id,directions_time%20FROM%20schools_directions",
+  pathStyle:     {"strokeColor": "red", "strokeWeight": 7, "strokeOpacity": 1 }
+};
+
+function addMarker(map, type, data) {
 
   var icon = null;
 
@@ -12,10 +19,11 @@ function addMarker(map, type, lat, lng) {
   }
 
   marker = new google.maps.Marker({
-    position: new google.maps.LatLng(lat, lng),
+    position: new google.maps.LatLng(data.latitude, data.longitude),
     icon: icon,
     map: map,
-    type: type
+    type: type,
+    data: data
   });
 
 
@@ -24,73 +32,48 @@ function addMarker(map, type, lat, lng) {
 }
 
 function onMarkerClick(event) {
-  console.log(this, event);
+  //console.log(this, event);
 
-  // Set infowindow content
-  infowindow.setContent("<p>"+this.type+"</p>");
+  if (this.type != "hosting") {
+    if (this.data.address_of_relocating_school) {
+      var content = "<p><strong>address of relocating school</strong><br />" +
+        this.data.address_of_relocating_school+"</p>";
+    }
+  }
 
-  // Set infowindow latlng
+  infowindow.setContent(content);
   infowindow.setPosition(event.latLng);
-
-  // Show it!
   infowindow.open();
 }
 
-function getRelocatingSchools() {
+function addPoints(url, type) {
 
-  var url = "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT%20ST_X(the_geom)%20as%20longitude,%20ST_Y(the_geom)%20as%20latitude,%20address_of_relocating_school,borough,grade_levels_that_are_relocating,host_bldg_id%20FROM%20relocating_schools";
   $.ajax({ url: url, success: function(data) {
 
     _.each(data.rows, function(d) {
-      addMarker(map, "relocating", d.latitude, d.longitude);
+      addMarker(map, type, d);
     });
 
-
   }});
-
-}
-
-function getHostingSchools() {
-
-  var url = "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT%20ST_X(the_geom)%20as%20longitude,ST_Y(the_geom)%20as%20latitude,host_bldg_address,host_bldg_id,host_bldg_name,host_boro%20FROM%20host_schools";
-  $.ajax({ url: url, success: function(data) {
-    _.each(data.rows, function(d) {
-      addMarker(map, "hosting", d.latitude, d.longitude);
-    });
-  }});
-
-}
-
-function getLines() {
 
 }
 
 
 function draw() {
 
-  var geo = {
-    "type": "FeatureCollection",
-    "features": [{
-      "type": "Feature",
-      "properties": {
-        "st_astext": "MULTILINESTRING((-71.160281 42.258729,-71.160837 42.259113,-71.161144 42.25932))"
-      },
-      "geometry": {
-        "type": "MultiLineString",
-        "coordinates": [
-          [
-            [-71.160281, 42.258729],
-            [-71.160837, 42.259113],
-            [-71.161144, 42.25932]
-          ]
-        ]
-      }
-    }]
-  }
 
-  var path = new GeoJSON(geo, pathStyle);
+  $.ajax({ url: CONFIG.pathURL, success: function(data) {
 
-  path[0][0].setMap(map);
+    var results = data.rows;
+
+    _.each(results, function(p) {
+      var geo = JSON.parse(p.st_asgeojson);
+      var path = new GeoJSON(geo, CONFIG.pathStyle);
+      path[0].setMap(map);
+    });
+
+  }});
+
 }
 
 
@@ -99,18 +82,16 @@ function init() {
   map = new google.maps.Map(document.getElementById('map'), {
     center: new google.maps.LatLng(40.7143528, -74.0059731),
     disableDefaultUI: false,
-    zoom: 11,
     mapTypeId: google.maps.MapTypeId.ROADMAP,
-    mapTypeControl: false
+    mapTypeControl: false,
+    zoom: 11,
   });
 
-  getRelocatingSchools();
-  getHostingSchools();
+  addPoints(CONFIG.relocatingURL, "relocating");
+  addPoints(CONFIG.hostingURL,    "hosting");
 
   draw();
   infowindow = new CartoDBInfowindow(map);
-
-
 }
 
 
