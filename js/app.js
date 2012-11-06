@@ -5,7 +5,7 @@ CONFIG = {
   relocatingURL: "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT%20ST_X(the_geom)%20as%20longitude,%20ST_Y(the_geom)%20as%20latitude,%20address_of_relocating_school,borough,grade_levels_that_are_relocating,host_bldg_id%20FROM%20relocating_schools",
   hostingURL:    "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT%20ST_X(the_geom)%20as%20longitude,ST_Y(the_geom)%20as%20latitude,host_bldg_address,host_bldg_id,host_bldg_name,host_boro%20FROM%20host_schools",
   pathURL:       "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT%20ST_AsGeoJSON(the_geom),relocating_school_bn,host_bldg_id,directions_time%20FROM%20schools_directions",
-  pathStyle:     {"strokeColor": "red", "strokeWeight": 7, "strokeOpacity": 1 }
+  pathStyle:     {"strokeColor": "red", "strokeWeight": 3, "strokeOpacity": 1 }
 };
 
 function addMarker(map, type, data) {
