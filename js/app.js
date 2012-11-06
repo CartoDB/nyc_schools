@@ -1,10 +1,19 @@
 
 var map, infowindow, cartodb_gmaps1, cartodb_gmaps2;
 
-function addMarker(map, lat, lng) {
-console.log(map, lat, lng);
+function addMarker(map, type, lat, lng) {
+
+var icon = null;
+if (type == "hosting") {
+  icon = { path: google.maps.SymbolPath.CIRCLE, fillColor: "green", fillOpacity: 0.8, scale: 3, strokeColor: "green", strokeWeight: 2 };
+} else {
+  icon = { path: google.maps.SymbolPath.CIRCLE, fillColor: "red", fillOpacity: 0.7, scale: 3, strokeColor: "red", strokeWeight: 2 };
+}
+
+
   marker = new google.maps.Marker({
     position: new google.maps.LatLng(lat, lng),
+    icon: goldStar,
     map: map
   });
 }
@@ -13,11 +22,10 @@ function getRelocatingSchools() {
 
   var url = "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT%20ST_X(the_geom)%20as%20longitude,%20ST_Y(the_geom)%20as%20latitude,%20address_of_relocating_school,borough,grade_levels_that_are_relocating,host_bldg_id%20FROM%20relocating_schools";
   $.ajax({ url: url, success: function(data) {
-    console.log(data);
 
-  _.each(data.rows, function(d) {
-    addMarker(map, d.latitude, d.longitude);
-  });
+    _.each(data.rows, function(d) {
+      addMarker(map, "relocating", d.latitude, d.longitude);
+    });
 
 
   }});
@@ -28,7 +36,9 @@ function getHostingSchools() {
 
   var url = "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT%20ST_X(the_geom)%20as%20longitude,ST_Y(the_geom)%20as%20latitude,host_bldg_address,host_bldg_id,host_bldg_name,host_boro%20FROM%20host_schools";
   $.ajax({ url: url, success: function(data) {
-    console.log(data);
+    _.each(data.rows, function(d) {
+      addMarker(map, "hosting", d.latitude, d.longitude);
+    });
   }});
 
 }
