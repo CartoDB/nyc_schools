@@ -50,7 +50,11 @@ function selectPath(e) {
 
 
   if (this.data.address_of_relocating_school) {
-    var content = "<p><strong>Relocating address</strong><br />" +
+    var content = "<p><strong>Name</strong><br />" +
+      this.data.name_of_relocating_school+"</p>" +
+    "<p><strong>Host address</strong><br />" +
+      this.data.host_bldg_name+"</p>" +
+    "<p><strong>Relocating address</strong><br />" +
       this.data.address_of_relocating_school+"</p>";
   }
 
@@ -93,7 +97,7 @@ function init() {
     streetViewControl: false,
     zoomControl: true,
     zoomControlOptions: {
-      style: google.maps.ZoomControlStyle.LARGE
+      style: google.maps.ZoomControlStyle.SMALL
     },
     scaleControl: true,
     zoom: 11,
