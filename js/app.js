@@ -2,10 +2,12 @@ var map, infowindow;
 
 
 CONFIG = {
-  relocatingURL: "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT%20ST_X(the_geom)%20as%20longitude,%20ST_Y(the_geom)%20as%20latitude,%20address_of_relocating_school,borough,grade_levels_that_are_relocating,host_bldg_id%20FROM%20relocating_schools",
-  hostingURL:    "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT%20ST_X(the_geom)%20as%20longitude,ST_Y(the_geom)%20as%20latitude,host_bldg_address,host_bldg_id,host_bldg_name,host_boro%20FROM%20host_schools",
-  pathURL:       "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT%20ST_AsGeoJSON(the_geom),relocating_school_bn,host_bldg_id,directions_time%20FROM%20schools_directions",
-  pathStyle:     {"strokeColor": "red", "strokeWeight": 3, "strokeOpacity": 1 }
+  relocatingURL:   "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT%20ST_X(the_geom)%20as%20longitude,%20ST_Y(the_geom)%20as%20latitude,%20address_of_relocating_school,borough,grade_levels_that_are_relocating,host_bldg_id%20FROM%20relocating_schools",
+  hostingURL:      "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT%20ST_X(the_geom)%20as%20longitude,ST_Y(the_geom)%20as%20latitude,host_bldg_address,host_bldg_id,host_bldg_name,host_boro%20FROM%20host_schools",
+  pathURL:         "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT%20ST_AsGeoJSON(the_geom),relocating_school_bn,host_bldg_id,directions_time%20FROM%20schools_directions",
+  pathStyle:       {"strokeColor": "#333", "strokeWeight": 2, "strokeOpacity": .8 },
+  hostingIcon:     { path: google.maps.SymbolPath.CIRCLE, fillColor: "black", fillOpacity: 0.8, scale: 5, strokeColor: "black", strokeWeight: 0 },
+  relocatingIcon:  { path: google.maps.SymbolPath.CIRCLE, fillColor: "red",   fillOpacity: 0.8, scale: 5, strokeColor: "red",   strokeWeight: 0 },
 };
 
 function addMarker(map, type, data) {
@@ -13,9 +15,9 @@ function addMarker(map, type, data) {
   var icon = null;
 
   if (type == "hosting") {
-    icon = { path: google.maps.SymbolPath.CIRCLE, fillColor: "green", fillOpacity: 0.8, scale: 3, strokeColor: "green", strokeWeight: 2 };
+    icon = CONFIG.hostingIcon
   } else {
-    icon = { path: google.maps.SymbolPath.CIRCLE, fillColor: "red", fillOpacity: 0.7, scale: 3, strokeColor: "red", strokeWeight: 2 };
+    icon = CONFIG.relocatingIcon
   }
 
   marker = new google.maps.Marker({
