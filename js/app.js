@@ -89,7 +89,13 @@ function init() {
     center: new google.maps.LatLng(40.7143528, -74.0059731),
     disableDefaultUI: false,
     mapTypeId: google.maps.MapTypeId.ROADMAP,
-    mapTypeControl: false,
+    panControl: false,
+    streetViewControl: false,
+    zoomControl: true,
+    zoomControlOptions: {
+      style: google.maps.ZoomControlStyle.LARGE
+    },
+    scaleControl: true,
     zoom: 11,
   });
 
