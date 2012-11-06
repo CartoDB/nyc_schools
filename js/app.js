@@ -52,7 +52,7 @@ function selectPath(e) {
 
   if (this.type != "hosting") {
     if (this.data.address_of_relocating_school) {
-      var content = "<p><strong>address of relocating school</strong><br />" +
+      var content = "<p><strong>Relocating address</strong><br />" +
         this.data.address_of_relocating_school+"</p>";
     }
   }
