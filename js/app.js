@@ -24,7 +24,16 @@ function addMarker(map, type, lat, lng) {
 }
 
 function onMarkerClick(event) {
-  //console.log(this);
+  console.log(this, event);
+
+  // Set infowindow content
+  infowindow.setContent(this.type);
+
+  // Set infowindow latlng
+  infowindow.setPosition(event.latLng);
+
+  // Show it!
+  infowindow.open();
 }
 
 function getRelocatingSchools() {
@@ -67,7 +76,7 @@ function init() {
   getRelocatingSchools();
   getHostingSchools();
 
-  //infowindow = new CartoDBInfowindow(map);
+  infowindow = new CartoDBInfowindow(map);
 
   /*cartodb_gmaps2 = new CartoDBLayer({
     map: map,
