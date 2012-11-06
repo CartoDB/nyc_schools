@@ -3,19 +3,28 @@ var map, infowindow, cartodb_gmaps1, cartodb_gmaps2;
 
 function addMarker(map, type, lat, lng) {
 
-var icon = null;
-if (type == "hosting") {
-  icon = { path: google.maps.SymbolPath.CIRCLE, fillColor: "green", fillOpacity: 0.8, scale: 3, strokeColor: "green", strokeWeight: 2 };
-} else {
-  icon = { path: google.maps.SymbolPath.CIRCLE, fillColor: "red", fillOpacity: 0.7, scale: 3, strokeColor: "red", strokeWeight: 2 };
-}
+  var icon = null;
 
+  if (type == "hosting") {
+    icon = { path: google.maps.SymbolPath.CIRCLE, fillColor: "green", fillOpacity: 0.8, scale: 3, strokeColor: "green", strokeWeight: 2 };
+  } else {
+    icon = { path: google.maps.SymbolPath.CIRCLE, fillColor: "red", fillOpacity: 0.7, scale: 3, strokeColor: "red", strokeWeight: 2 };
+  }
 
   marker = new google.maps.Marker({
     position: new google.maps.LatLng(lat, lng),
     icon: icon,
-    map: map
+    map: map,
+    type: type
   });
+
+
+  google.maps.event.addListener(marker, 'click', onMarkerClick);
+
+}
+
+function onMarkerClick(event) {
+  //console.log(this);
 }
 
 function getRelocatingSchools() {
