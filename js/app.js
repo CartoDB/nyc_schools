@@ -13,7 +13,7 @@ if (type == "hosting") {
 
   marker = new google.maps.Marker({
     position: new google.maps.LatLng(lat, lng),
-    icon: goldStar,
+    icon: icon,
     map: map
   });
 }
