@@ -1,12 +1,25 @@
 
 var map, infowindow, cartodb_gmaps1, cartodb_gmaps2;
 
+function addMarker(map, lat, lng) {
+console.log(map, lat, lng);
+  marker = new google.maps.Marker({
+    position: new google.maps.LatLng(lat, lng),
+    map: map
+  });
+}
 
 function getRelocatingSchools() {
 
   var url = "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT%20ST_X(the_geom)%20as%20longitude,%20ST_Y(the_geom)%20as%20latitude,%20address_of_relocating_school,borough,grade_levels_that_are_relocating,host_bldg_id%20FROM%20relocating_schools";
   $.ajax({ url: url, success: function(data) {
     console.log(data);
+
+  _.each(data.rows, function(d) {
+    addMarker(map, d.latitude, d.longitude);
+  });
+
+
   }});
 
 }
