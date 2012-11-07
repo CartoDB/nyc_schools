@@ -131,7 +131,8 @@ function draw() {
           google.maps.event.addListener(relocating, 'click', selectPath);
           google.maps.event.addListener(hosting,    'click', selectPath);
 
-      i++;
+          i++;
+
         }
       });
 
