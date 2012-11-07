@@ -68,37 +68,25 @@ function selectPath(e) {
     _.each(paths, function(p) {
       if (p.data.host_bldg_ids != that.data.host_bldg_ids) p.path.setMap(null);
       else {
-      p.path.setOptions({"strokeColor": "#333",
-          "strokeWeight": 2.5,
-          "strokeOpacity": .8
-      });
-      p.path.setMap(map);
+        p.path.setOptions({"strokeColor": "#333", "strokeWeight": 2.5, "strokeOpacity": .8 });
+        p.path.setMap(map);
       }
     });
-
 
     content = "<p><strong>Host Blg Name</strong><br />" +
       this.data.host_building_names.join("<br />")+"</p>" +
       "<p><strong>Name of relocating school</strong><br />" +
-      this.data.name_of_relocating_school+"</p>" +
-      "<p><strong>Grade levels that are relocating</strong><br />" +
-      this.data.grades_levels_that_are_relocating.join("<br />") +"</p>";
+      this.data.name_of_relocating_school+"</p>";
+
   } else {
 
     _.each(paths, function(p) {
       if (p.data.host_bldg_ids != that.data.host_bldg_ids) p.path.setMap(null);
       else {
-        p.path.setOptions({"strokeColor": "#333",
-          "strokeWeight": 2.5,
-          "strokeOpacity": .8
-        });
+        p.path.setOptions({"strokeColor": "#333", "strokeWeight": 2.5, "strokeOpacity": .8 });
         p.path.setMap(map);
       }
     });
-
-
-
-
 
     content = "<p><strong>Name of relocating school</strong><br />" +
       this.data.name_of_relocating_school+"</p>" +
@@ -134,7 +122,7 @@ function draw() {
           var hosting    = addMarker( map, "hosting",    hc, p );
           var relocating = addMarker( map, "relocating", rc, p );
 
-          paths.push({ data: p, hosting: hosting, relocating: relocating, path: drawPath(hc, rc) });
+          paths.push({ data: p, path: drawPath(hc, rc) });
 
           google.maps.event.addListener(relocating, 'click', selectPath);
           google.maps.event.addListener(hosting,    'click', selectPath);
