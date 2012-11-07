@@ -9,14 +9,12 @@ CONFIG = {
 
   pathStyle:       {"strokeColor": "#333", "strokeWeight": 2, "strokeOpacity": .8 },
   hostingIcon:     { path: google.maps.SymbolPath.CIRCLE, fillColor: "black", fillOpacity: 0.8, scale: 5, strokeColor: "black", strokeWeight: 0 },
-  relocatingIcon:  { path: google.maps.SymbolPath.CIRCLE, fillColor: "red",   fillOpacity: 0.3, scale: 5, strokeColor: "black",   strokeWeight: 1 },
+  relocatingIcon:  { path: google.maps.SymbolPath.CIRCLE, fillColor: "red",   fillOpacity: 0.8, scale: 5, strokeColor: "black",   strokeWeight: 1 },
 };
 
 window.paths = paths;
 
 function addMarker(map, type, coordinates, data, i) {
-
-  console.log("Adding 1 marker", type, coordinates);
 
   var icon = null;
 
@@ -95,7 +93,7 @@ console.log(this.data);
     content = "<p><strong>Name of relocating school</strong><br />" +
       this.data.name_of_relocating_school+"</p>" +
       "<p><strong>Grade levels that are relocating</strong><br />" +
-      this.data.grades.join("<br />")+"</p>" +
+      this.data.grades_levels_that_are_relocating.join("<br />")+"</p>" +
       "<p><strong>Host Blg Name</strong><br />" +
       this.data.host_building_names.join("<br />")+"</p>";
   }
@@ -126,18 +124,16 @@ function draw() {
           var rc = [parseFloat(relocating_coordinates[1], 10) , parseFloat(relocating_coordinates[0], 10)];
 
           var hosting    = addMarker( map, "hosting",    hc, p, i );
+          var relocating = addMarker( map, "relocating", rc, p, 0);
 
+          paths.push({ data: p, path: drawPath(hc, rc) });
 
+          google.maps.event.addListener(relocating, 'click', selectPath);
           google.maps.event.addListener(hosting,    'click', selectPath);
 
           i++;
 
         }
-
-        paths.push({ data: p, path: drawPath(hc, rc) });
-        var relocating = addMarker( map, "relocating", rc, p, 0);
-        google.maps.event.addListener(relocating, 'click', selectPath);
-
       });
 
     });
