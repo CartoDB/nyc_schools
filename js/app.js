@@ -9,7 +9,7 @@ CONFIG = {
 
   pathStyle:       {"strokeColor": "#333", "strokeWeight": 2, "strokeOpacity": .8 },
   hostingIcon:     { path: google.maps.SymbolPath.CIRCLE, fillColor: "black", fillOpacity: 0.8, scale: 5, strokeColor: "black", strokeWeight: 0 },
-  relocatingIcon:  { path: google.maps.SymbolPath.CIRCLE, fillColor: "red",   fillOpacity: 0.2, scale: 5, strokeColor: "red",   strokeWeight: 0 },
+  relocatingIcon:  { path: google.maps.SymbolPath.CIRCLE, fillColor: "red",   fillOpacity: 0.8, scale: 5, strokeColor: "black",   strokeWeight: 1 },
 };
 
 window.paths = paths;
@@ -128,10 +128,13 @@ function draw() {
           var hosting_coordinates    = c.split(",");
           var relocating_coordinates = p.coordinates_relocating_school.split(",");
 
-          var hosting    = addMarker( map, "hosting",    [hosting_coordinates[1], hosting_coordinates[0]], p );
-          var relocating = addMarker( map, "relocating", [relocating_coordinates[1], relocating_coordinates[0]], p );
+          var hc = [parseFloat(hosting_coordinates[1], 10) + Math.random()/100, parseFloat(hosting_coordinates[0], 10) + Math.random()/100];
+          var rc = [parseFloat(relocating_coordinates[1], 10) + Math.random()/100, parseFloat(relocating_coordinates[0], 10) + Math.random()/100];
 
-          paths.push({ data: p, hosting: hosting, relocating: relocating, path: drawPath([hosting_coordinates[1], hosting_coordinates[0]], [relocating_coordinates[1], relocating_coordinates[0]]) });
+          var hosting    = addMarker( map, "hosting",    hc, p );
+          var relocating = addMarker( map, "relocating", rc, p );
+
+          paths.push({ data: p, hosting: hosting, relocating: relocating, path: drawPath(hc, rc) });
 
           google.maps.event.addListener(relocating, 'click', selectPath);
           google.maps.event.addListener(hosting,    'click', selectPath);
