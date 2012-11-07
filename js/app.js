@@ -128,8 +128,8 @@ function draw() {
           var hosting_coordinates    = c.split(",");
           var relocating_coordinates = p.coordinates_relocating_school.split(",");
 
-          var hc = [parseFloat(hosting_coordinates[1], 10) + Math.random()/100, parseFloat(hosting_coordinates[0], 10) + Math.random()/100];
-          var rc = [parseFloat(relocating_coordinates[1], 10) + Math.random()/100, parseFloat(relocating_coordinates[0], 10) + Math.random()/100];
+          var hc = [parseFloat(hosting_coordinates[1], 10) + Math.random()/1000, parseFloat(hosting_coordinates[0], 10) + Math.random()/1000];
+          var rc = [parseFloat(relocating_coordinates[1], 10) + Math.random()/1000, parseFloat(relocating_coordinates[0], 10) + Math.random()/1000];
 
           var hosting    = addMarker( map, "hosting",    hc, p );
           var relocating = addMarker( map, "relocating", rc, p );
