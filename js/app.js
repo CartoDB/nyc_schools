@@ -6,13 +6,13 @@ CONFIG = {
   dataURL: "http://wsjgraphics.cartodb.com/api/v1/sql?q=%20SELECT%20array_agg(ST_X(hs.the_geom)%7C%7C','%7C%7CST_Y(hs.the_geom))%20as%20host_coordinates,%20array_agg(rs.host_bldg_id)%20as%20host_bldg_ids,%20array_agg(rs.host_building_name)%20as%20host_building_names,%20array_agg(rs.host_building_address)%20as%20host_building_addresses,%20array_agg(grade_levels_that_are_relocating)%20as%20grades,%20ST_X(rs.the_geom)%7C%7C','%7C%7CST_Y(rs.the_geom)%20as%20coordinates_relocating_school,%20rs.name_of_relocating_school,%20addressofrelocatingschool,%20relocating_school_bn%20FROM%20relocating_lines%20as%20rs%20inner%20join%20hosting_schools%20as%20hs%20on%20rs.host_bldg_id=hs.host_bldg_id%20GROUP%20BY%20rs.the_geom,name_of_relocating_school,addressofrelocatingschool,relocating_school_bn",
   mapStyle: [ { stylers: [ { saturation: -65 }, { gamma: 1.52 } ] },{ featureType: "administrative", stylers: [ { saturation: -95 }, { gamma: 2.26 } ] },{ featureType: "water", elementType: "labels", stylers: [ { visibility: "off" } ] },{ featureType: "administrative.locality", stylers: [ { visibility: "off" } ] },{ featureType: "road", stylers: [ { visibility: "simplified" }, { saturation: -99 }, { gamma: 2.22 } ] },{ featureType: "poi", elementType: "labels", stylers: [ { visibility: "off" } ] },{ featureType: "road.arterial", stylers: [ { visibility: "off" } ] },{ featureType: "road.local", elementType: "labels", stylers: [ { visibility: "off" } ] },{ featureType: "transit", stylers: [ { visibility: "off" } ] },{ featureType: "road", elementType: "labels", stylers: [ { visibility: "off" } ] },{ featureType: "poi", stylers: [ { saturation: -55 } ] } ],
   pathStyle:       {"strokeColor": "#333", "strokeWeight": 2, "strokeOpacity": .8 },
-  hostingIcon:     { path: google.maps.SymbolPath.CIRCLE, fillColor: "black", fillOpacity: 0.8, scale: 5, strokeColor: "black", strokeWeight: 0 },
-  relocatingIcon:  { path: google.maps.SymbolPath.CIRCLE, fillColor: "red",   fillOpacity: 0.4, scale: 5, strokeColor: "black",   strokeWeight: 1 },
+  hostingIcon:     { path: google.maps.SymbolPath.CIRCLE, fillColor: "black", fillOpacity: 0.7, scale: 5, strokeColor: "black", strokeWeight: 0 },
+  relocatingIcon:  { path: google.maps.SymbolPath.CIRCLE, fillColor: "red",   fillOpacity: 0.7, scale: 5, strokeColor: "black",   strokeWeight: 1 },
 };
 
 window.paths = paths;
 
-function addMarker(map, type, coordinates, data, i) {
+function addMarker(map, type, coordinates, data, i, relocatingPaths) {
 
   var icon = null;
 
@@ -28,7 +28,8 @@ function addMarker(map, type, coordinates, data, i) {
     map: map,
     type: type,
     data: data,
-    i: i
+    i: i,
+    paths: relocatingPaths
   });
 }
 
@@ -111,6 +112,8 @@ function draw() {
       var i = 0;
       var relocating_coordinates = p.coordinates_relocating_school.split(",");
       var rc = [parseFloat(relocating_coordinates[1], 10) , parseFloat(relocating_coordinates[0], 10)];
+      var relocatingPaths = [];
+
       _.each(p.host_coordinates, function(c) {
 
         if (c != null) {
@@ -119,16 +122,19 @@ function draw() {
 
           var hc = [parseFloat(hosting_coordinates[1], 10), parseFloat(hosting_coordinates[0], 10)];
 
-          var hosting    = addMarker( map, "hosting",    hc, p, i );
+          var hosting    = addMarker( map, "hosting", hc, p, i );
 
-          paths.push({ data: p, path: drawPath(hc, rc) });
+          var path = drawPath(hc, rc);
+          paths.push({ data: p, path: path });
 
-          google.maps.event.addListener(hosting,    'click', selectPath);
+          relocatingPaths.push(path);
+
+          google.maps.event.addListener(hosting, 'click', selectPath);
 
           i++;
         }
 
-        var relocating = addMarker( map, "relocating", rc, p, 0);
+        var relocating = addMarker( map, "relocating", rc, p, 0, relocatingPaths);
         google.maps.event.addListener(relocating, 'click', selectPath);
 
       });
