@@ -33,7 +33,6 @@ function addMarker(map, type, coordinates, data) {
   });
 }
 
-
 function drawPath(p1, p2) {
   var coordinates = [
     new google.maps.LatLng(p1[0], p1[1]),
@@ -49,7 +48,7 @@ function drawPath(p1, p2) {
 
   path.setMap(map);
 
-return path;
+  return path;
 }
 
 function drawPath_old(route) {
@@ -66,14 +65,16 @@ function selectPath(e) {
 
   if (that.type == "hosting") {
 
-
-
-      console.log(that.data.host_bldg_ids);
     _.each(paths, function(p) {
       if (p.data.host_bldg_ids != that.data.host_bldg_ids) p.path.setMap(null);
-      else p.path.setMap(map);
+      else {
+      p.path.setOptions({"strokeColor": "#333",
+          "strokeWeight": 2.5,
+          "strokeOpacity": .8
+      });
+      p.path.setMap(map);
+      }
     });
-
 
 
     content = "<p><strong>Host Blg Name</strong><br />" +
@@ -84,10 +85,15 @@ function selectPath(e) {
       this.data.grades_levels_that_are_relocating+"</p>";
   } else {
 
-      console.log(that.data.host_bldg_ids);
     _.each(paths, function(p) {
       if (p.data.host_bldg_ids != that.data.host_bldg_ids) p.path.setMap(null);
-      else p.path.setMap(map);
+      else {
+        p.path.setOptions({"strokeColor": "#333",
+          "strokeWeight": 2.5,
+          "strokeOpacity": .8
+        });
+        p.path.setMap(map);
+      }
     });
 
 
@@ -117,18 +123,18 @@ function draw() {
 
       _.each(p.host_coordinates, function(c) {
 
-      if (c != null) {
+        if (c != null) {
 
-        var hosting_coordinates    = c.split(",");
-        var relocating_coordinates = p.coordinates_relocating_school.split(",");
+          var hosting_coordinates    = c.split(",");
+          var relocating_coordinates = p.coordinates_relocating_school.split(",");
 
-        var hosting    = addMarker( map, "hosting",    [hosting_coordinates[1], hosting_coordinates[0]], p );
-        var relocating = addMarker( map, "relocating", [relocating_coordinates[1], relocating_coordinates[0]], p );
+          var hosting    = addMarker( map, "hosting",    [hosting_coordinates[1], hosting_coordinates[0]], p );
+          var relocating = addMarker( map, "relocating", [relocating_coordinates[1], relocating_coordinates[0]], p );
 
-        paths.push({ data: p, hosting: hosting, relocating: relocating, path: drawPath([hosting_coordinates[1], hosting_coordinates[0]], [relocating_coordinates[1], relocating_coordinates[0]]) });
+          paths.push({ data: p, hosting: hosting, relocating: relocating, path: drawPath([hosting_coordinates[1], hosting_coordinates[0]], [relocating_coordinates[1], relocating_coordinates[0]]) });
 
-        google.maps.event.addListener(relocating, 'click', selectPath);
-        google.maps.event.addListener(hosting,    'click', selectPath);
+          google.maps.event.addListener(relocating, 'click', selectPath);
+          google.maps.event.addListener(hosting,    'click', selectPath);
 
         }
       });
@@ -156,7 +162,7 @@ function init() {
     zoom: 11,
   });
 
- var styledMap = new google.maps.StyledMapType(CONFIG.mapStyle, {name: "Styled Map"});
+  var styledMap = new google.maps.StyledMapType(CONFIG.mapStyle, {name: "Styled Map"});
 
   map.mapTypes.set('map_style', styledMap);
   map.setMapTypeId('map_style');
