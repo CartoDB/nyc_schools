@@ -51,13 +51,6 @@ function drawPath(p1, p2) {
   return path;
 }
 
-function drawPath_old(route) {
-  var geo  = JSON.parse(route);
-  var path = new GeoJSON(geo, CONFIG.pathStyle);
-  path[0].setMap(map);
-  return path[0];
-}
-
 function selectPath(e) {
   var that = this;
 
@@ -105,7 +98,18 @@ function draw() {
 
   $.ajax({ url: CONFIG.dataURL, success: function(data) {
 
-    var results = data.rows;
+ try {
+
+        if (!data.rows) {
+          data = JSON.parse(data);
+        }
+
+      } catch (e) {
+        // console.log(e);
+        return;
+      }
+      var results = data.rows;
+
 
     _.each(results, function(p) {
 
