@@ -78,11 +78,11 @@ function selectPath(e) {
 
 
     content = "<p><strong>Host Blg Name</strong><br />" +
-      this.data.host_building_names+"</p>" +
+      this.data.host_building_names.join("<br />")+"</p>" +
       "<p><strong>Name of relocating school</strong><br />" +
       this.data.name_of_relocating_school+"</p>" +
       "<p><strong>Grade levels that are relocating</strong><br />" +
-      this.data.grades_levels_that_are_relocating+"</p>";
+      this.data.grades_levels_that_are_relocating.join("<br />") +"</p>";
   } else {
 
     _.each(paths, function(p) {
@@ -103,7 +103,7 @@ function selectPath(e) {
     content = "<p><strong>Name of relocating school</strong><br />" +
       this.data.name_of_relocating_school+"</p>" +
       "<p><strong>Grade levels that are relocating</strong><br />" +
-      this.data.grades_levels_that_are_relocating+"</p>" +
+      this.data.grades_levels_that_are_relocating.join("<br />")+"</p>" +
       "<p><strong>Host Blg Name</strong><br />" +
       this.data.host_building_names.join("<br />")+"</p>";
   }
