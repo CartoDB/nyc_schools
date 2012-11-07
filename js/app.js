@@ -3,7 +3,7 @@ paths      = [],
 infowindow = null;
 
 CONFIG = {
-  dataURL:         "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT%20ST_X(rs.the_geom)%20as%20rs_longitude,%20ST_Y(rs.the_geom)%20as%20rs_latitude,ST_X(hs.the_geom)%20as%20hs_longitude,%20ST_Y(hs.the_geom)%20as%20hs_latitude,ST_AsGeoJSON(sd.the_geom,4)%20as%20route,rs.relocating_school_bn,rs.host_bldg_id,directions_time,address_of_relocating_school,%20hs.host_bldg_name,rs.name_of_relocating_school%20FROM%20schools_directions%20as%20sd%20INNER%20JOIN%20relocating_schools%20as%20rs%20ON%20sd.relocating_school_bn=rs.relocating_school_bn%20INNER%20JOIN%20host_schools%20as%20hs%20ON%20hs.host_bldg_id=rs.host_bldg_id",
+  dataURL:         "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT%20ST_X(rs.the_geom)%20as%20rs_longitude,%20ST_Y(rs.the_geom)%20as%20rs_latitude,ST_X(hs.the_geom)%20as%20hs_longitude,%20ST_Y(hs.the_geom)%20as%20hs_latitude,ST_AsGeoJSON(sd.the_geom,4)%20as%20route,rs.relocating_school_bn,rs.host_bldg_id,directions_time,address_of_relocating_school,%20hs.host_bldg_name,rs.grade_levels_that_are_relocating,rs.name_of_relocating_school%20FROM%20schools_directions%20as%20sd%20INNER%20JOIN%20relocating_schools%20as%20rs%20ON%20sd.relocating_school_bn=rs.relocating_school_bn%20INNER%20JOIN%20host_schools%20as%20hs%20ON%20hs.host_bldg_id=rs.host_bldg_id",
   mapStyle: [ { stylers: [ { saturation: -65 }, { gamma: 1.52 } ] },{ featureType: "administrative", stylers: [ { saturation: -95 }, { gamma: 2.26 } ] },{ featureType: "water", elementType: "labels", stylers: [ { visibility: "off" } ] },{ featureType: "administrative.locality", stylers: [ { visibility: "off" } ] },{ featureType: "road", stylers: [ { visibility: "simplified" }, { saturation: -99 }, { gamma: 2.22 } ] },{ featureType: "poi", elementType: "labels", stylers: [ { visibility: "off" } ] },{ featureType: "road.arterial", stylers: [ { visibility: "off" } ] },{ featureType: "road.local", elementType: "labels", stylers: [ { visibility: "off" } ] },{ featureType: "transit", stylers: [ { visibility: "off" } ] },{ featureType: "road", elementType: "labels", stylers: [ { visibility: "off" } ] },{ featureType: "poi", stylers: [ { saturation: -55 } ] } ],
 
   pathStyle:       {"strokeColor": "#333", "strokeWeight": 2, "strokeOpacity": .8 },
@@ -48,21 +48,27 @@ function selectPath(e) {
     else p.path.setMap(map);
   });
 
+  var content = "";
 
-  if (this.data.address_of_relocating_school) {
-    var content = "<p><strong>Name</strong><br />" +
-      this.data.name_of_relocating_school+"</p>" +
-    "<p><strong>Host address</strong><br />" +
+  if (that.type == "hosting") {
+    content = "<p><strong>Host Blg Name</strong><br />" +
       this.data.host_bldg_name+"</p>" +
-    "<p><strong>Relocating address</strong><br />" +
-      this.data.address_of_relocating_school+"</p>";
+      "<p><strong>Name of relocating school</strong><br />" +
+      this.data.name_of_relocating_school+"</p>" +
+      "<p><strong>Grade levels that are relocating</strong><br />" +
+      this.data.grade_levels_that_are_relocating+"</p>";
+  } else {
+    content = "<p><strong>Name of relocating school</strong><br />" +
+      this.data.name_of_relocating_school+"</p>" +
+      "<p><strong>Grade levels that are relocating</strong><br />" +
+      this.data.grade_levels_that_are_relocating+"</p>" +
+      "<p><strong>Host Blg Name</strong><br />" +
+      this.data.host_bldg_name+"</p>";
   }
 
   infowindow.setContent(content);
   infowindow.setPosition(e.latLng);
   infowindow.open();
-
-
 }
 
 function draw() {
