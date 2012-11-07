@@ -90,7 +90,7 @@ function draw() {
 function init() {
 
   map = new google.maps.Map(document.getElementById('map'), {
-    center: new google.maps.LatLng(40.65355504328839, -73.94279479980469),
+    center: new google.maps.LatLng(40.69355504328839, -73.94279479980469),
     disableDefaultUI: false,
     mapTypeId: google.maps.MapTypeId.ROADMAP,
     panControl: false,
