@@ -3,7 +3,8 @@ paths      = [],
 infowindow = null;
 
 CONFIG = {
-  dataURL:         "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT%20ST_X(rs.the_geom)%20as%20rs_longitude,%20ST_Y(rs.the_geom)%20as%20rs_latitude,ST_X(hs.the_geom)%20as%20hs_longitude,%20ST_Y(hs.the_geom)%20as%20hs_latitude,ST_AsGeoJSON(sd.the_geom,4)%20as%20route,rs.relocating_school_bn,rs.host_bldg_id,directions_time,address_of_relocating_school,%20hs.host_bldg_name,rs.grade_levels_that_are_relocating,rs.name_of_relocating_school%20FROM%20schools_directions%20as%20sd%20INNER%20JOIN%20relocating_schools%20as%20rs%20ON%20sd.relocating_school_bn=rs.relocating_school_bn%20INNER%20JOIN%20host_schools%20as%20hs%20ON%20hs.host_bldg_id=rs.host_bldg_id",
+  //dataURL: "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT%20ST_X(rs.the_geom)%20as%20rs_longitude,%20ST_Y(rs.the_geom)%20as%20rs_latitude,ST_X(hs.the_geom)%20as%20hs_longitude,%20ST_Y(hs.the_geom)%20as%20hs_latitude,ST_AsGeoJSON(sd.the_geom,4)%20as%20route,rs.relocating_school_bn,rs.host_bldg_id,directions_time,address_of_relocating_school,%20hs.host_bldg_name,rs.grade_levels_that_are_relocating,rs.name_of_relocating_school%20FROM%20schools_directions%20as%20sd%20INNER%20JOIN%20relocating_schools%20as%20rs%20ON%20sd.relocating_school_bn=rs.relocating_school_bn%20INNER%20JOIN%20host_schools%20as%20hs%20ON%20hs.host_bldg_id=rs.host_bldg_id",
+  dataURL: "http://wsjgraphics.cartodb.com/api/v1/sql?q=SELECT array_agg(ST_X(rs.host_geom)%7C%7C','%7C%7CST_Y(rs.host_geom))as host_coordinates, array_agg(host_bldg_id) as host_bldg_ids, array_agg(host_building_name) as host_building_names, array_agg(host_building_address) as host_building_addresses, array_agg(host_bldg_id) as host_bldg_ids, ST_X(rs.the_geom)%7C%7C','%7C%7CST_Y(rs.the_geom) as coordinates_relocating_school, rs.grade_levels_that_are_relocating, rs.name_of_relocating_school, addressofrelocatingschool, relocating_school_bn FROM relocating_lines as rs GROUP BY the_geom,name_of_relocating_school,grade_levels_that_are_relocating,addressofrelocatingschool,relocating_school_bn",
   mapStyle: [ { stylers: [ { saturation: -65 }, { gamma: 1.52 } ] },{ featureType: "administrative", stylers: [ { saturation: -95 }, { gamma: 2.26 } ] },{ featureType: "water", elementType: "labels", stylers: [ { visibility: "off" } ] },{ featureType: "administrative.locality", stylers: [ { visibility: "off" } ] },{ featureType: "road", stylers: [ { visibility: "simplified" }, { saturation: -99 }, { gamma: 2.22 } ] },{ featureType: "poi", elementType: "labels", stylers: [ { visibility: "off" } ] },{ featureType: "road.arterial", stylers: [ { visibility: "off" } ] },{ featureType: "road.local", elementType: "labels", stylers: [ { visibility: "off" } ] },{ featureType: "transit", stylers: [ { visibility: "off" } ] },{ featureType: "road", elementType: "labels", stylers: [ { visibility: "off" } ] },{ featureType: "poi", stylers: [ { saturation: -55 } ] } ],
 
   pathStyle:       {"strokeColor": "#333", "strokeWeight": 2, "strokeOpacity": .8 },
@@ -62,7 +63,9 @@ function selectPath(e) {
   var that = this;
 
   _.each(paths, function(p) {
-    if (p.data.host_bldg_id != that.data.host_bldg_id) p.path.setMap(null);
+  //console.log(p.data.host_bldg_ids, that.data.host_bldg_ids);
+
+    if (p.data.host_bldg_ids != that.data.host_bldg_ids) p.path.setMap(null);
     else p.path.setMap(map);
   });
 
@@ -70,7 +73,7 @@ function selectPath(e) {
 
   if (that.type == "hosting") {
     content = "<p><strong>Host Blg Name</strong><br />" +
-      this.data.host_bldg_name+"</p>" +
+      this.data.host_building_names+"</p>" +
       "<p><strong>Name of relocating school</strong><br />" +
       this.data.name_of_relocating_school+"</p>" +
       "<p><strong>Grade levels that are relocating</strong><br />" +
@@ -81,7 +84,7 @@ function selectPath(e) {
       "<p><strong>Grade levels that are relocating</strong><br />" +
       this.data.grade_levels_that_are_relocating+"</p>" +
       "<p><strong>Host Blg Name</strong><br />" +
-      this.data.host_bldg_name+"</p>";
+      this.data.host_building_names.join("<br />")+"</p>";
   }
 
   infowindow.setContent(content);
@@ -94,15 +97,27 @@ function draw() {
   $.ajax({ url: CONFIG.dataURL, success: function(data) {
 
     var results = data.rows;
+
     _.each(results, function(p) {
+      //console.log(p);
 
-      var hosting    = addMarker( map, "hosting",    [p.hs_latitude, p.hs_longitude], p );
-      var relocating = addMarker( map, "relocating", [p.rs_latitude, p.rs_longitude], p );
+      _.each(p.host_coordinates, function(c) {
 
-      paths.push({ data: p, hosting: hosting, relocating: relocating, path: drawPath([p.hs_latitude, p.hs_longitude], [p.rs_latitude, p.rs_longitude]) });
+      if (c != null) {
 
-      google.maps.event.addListener(relocating, 'click', selectPath);
-      google.maps.event.addListener(hosting,    'click', selectPath);
+        var hosting_coordinates    = c.split(",");
+        var relocating_coordinates = p.coordinates_relocating_school.split(",");
+
+        var hosting    = addMarker( map, "hosting",    [hosting_coordinates[1], hosting_coordinates[0]], p );
+        var relocating = addMarker( map, "relocating", [relocating_coordinates[1], relocating_coordinates[0]], p );
+
+        paths.push({ data: p, hosting: hosting, relocating: relocating, path: drawPath([hosting_coordinates[1], hosting_coordinates[0]], [relocating_coordinates[1], relocating_coordinates[0]]) });
+
+        google.maps.event.addListener(relocating, 'click', selectPath);
+        google.maps.event.addListener(hosting,    'click', selectPath);
+
+        }
+      });
 
     });
 
