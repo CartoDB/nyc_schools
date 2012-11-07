@@ -14,7 +14,7 @@ CONFIG = {
 
 window.paths = paths;
 
-function addMarker(map, type, coordinates, data) {
+function addMarker(map, type, coordinates, data, i) {
 
   var icon = null;
 
@@ -29,7 +29,8 @@ function addMarker(map, type, coordinates, data) {
     icon: icon,
     map: map,
     type: type,
-    data: data
+    data: data,
+    i: i
   });
 }
 
@@ -73,8 +74,9 @@ function selectPath(e) {
       }
     });
 
+console.log(this.data);
     content = "<p><strong>Host Blg Name</strong><br />" +
-      this.data.host_building_names.join("<br />")+"</p>" +
+      this.data.host_building_names[this.i]+"</p>" +
       "<p><strong>Name of relocating school</strong><br />" +
       this.data.name_of_relocating_school+"</p>";
 
@@ -109,6 +111,8 @@ function draw() {
 
     _.each(results, function(p) {
 
+      var i = 0;
+
       _.each(p.host_coordinates, function(c) {
 
         if (c != null) {
@@ -119,14 +123,15 @@ function draw() {
           var hc = [parseFloat(hosting_coordinates[1], 10) + Math.random()/1000, parseFloat(hosting_coordinates[0], 10) + Math.random()/1000];
           var rc = [parseFloat(relocating_coordinates[1], 10) + Math.random()/1000, parseFloat(relocating_coordinates[0], 10) + Math.random()/1000];
 
-          var hosting    = addMarker( map, "hosting",    hc, p );
-          var relocating = addMarker( map, "relocating", rc, p );
+          var hosting    = addMarker( map, "hosting",    hc, p, i );
+          var relocating = addMarker( map, "relocating", rc, p, 0);
 
           paths.push({ data: p, path: drawPath(hc, rc) });
 
           google.maps.event.addListener(relocating, 'click', selectPath);
           google.maps.event.addListener(hosting,    'click', selectPath);
 
+      i++;
         }
       });
 
