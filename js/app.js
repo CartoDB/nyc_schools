@@ -33,7 +33,25 @@ function addMarker(map, type, coordinates, data) {
 }
 
 
-function drawPath(route) {
+function drawPath(p1, p2) {
+  var coordinates = [
+    new google.maps.LatLng(p1[0], p1[1]),
+    new google.maps.LatLng(p2[0], p2[1])
+  ];
+
+  var path = new google.maps.Polyline({
+    path: coordinates,
+    "strokeColor": "#333",
+    "strokeWeight": 1,
+    "strokeOpacity": .5
+  });
+
+  path.setMap(map);
+
+return path;
+}
+
+function drawPath_old(route) {
   var geo  = JSON.parse(route);
   var path = new GeoJSON(geo, CONFIG.pathStyle);
   path[0].setMap(map);
@@ -81,7 +99,7 @@ function draw() {
       var hosting    = addMarker( map, "hosting",    [p.hs_latitude, p.hs_longitude], p );
       var relocating = addMarker( map, "relocating", [p.rs_latitude, p.rs_longitude], p );
 
-      paths.push({ data: p, hosting: hosting, relocating: relocating, path: drawPath(p.route) });
+      paths.push({ data: p, hosting: hosting, relocating: relocating, path: drawPath([p.hs_latitude, p.hs_longitude], [p.rs_latitude, p.rs_longitude]) });
 
       google.maps.event.addListener(relocating, 'click', selectPath);
       google.maps.event.addListener(hosting,    'click', selectPath);
