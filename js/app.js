@@ -96,7 +96,10 @@ function selectPath(e) {
 
 function draw() {
 
-  $.ajax({ url: CONFIG.dataURL, success: function(data) {
+  $.ajax({ url: CONFIG.dataURL,
+   jsonpCallback: "callback",
+    dataType: "jsonp",
+  success: function(data) {
 
  try {
 
@@ -109,7 +112,6 @@ function draw() {
         return;
       }
       var results = data.rows;
-
 
     _.each(results, function(p) {
 
